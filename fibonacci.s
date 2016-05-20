@@ -3,14 +3,23 @@
 .prompt:
 	.string "Please enter the desired Fibonacci Number (0-200):"
 
-#.input:
-#	.string "%d"
+.input:
+	.string "%d"
+
+.error:
+	.asciz "Error improper about of arguments"
 
 .globl main
 main:
-	#xor	eax, eax
-	#mov	eax, [rsi]
-
+	cmp 	rdi, 2
+	jne	1f
+	
+	xor	eax, eax
+	mov	rdi, [rsi+8]	#argv[1]
+	xor	rsi, rsi	#0
+	mov	rdx, 10		#10
+	call	strtol
+	ret
 	#xor	r10, r10
 	#xor	r11, r11
 	#xor	r12, r12
@@ -21,6 +30,9 @@ main:
 	#mov	rcx, 5
 	#cld
 1:
+	mov	rdi, OFFSET .error
+	call	puts
+	ret
 	#mov	r12, r10
 	#add	r12, r11
 	#mov	r10, r11
