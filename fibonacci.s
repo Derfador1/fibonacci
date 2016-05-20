@@ -4,65 +4,60 @@
 	.string "Please enter the desired Fibonacci Number (0-200):"
 
 .input:
-	.string "%d"
+	.string "Ox%llx\n"
 
 .error:
 	.asciz "Error improper about of arguments"
 
+.error1:
+	.asciz "Strtol error"
+
 .globl main
 main:
 	cmp 	rdi, 2
-	jne	1f
+	jne	fail
 	
 	xor	eax, eax
 	mov	rdi, [rsi+8]	#argv[1]
 	xor	rsi, rsi	#0
 	mov	rdx, 10		#10
 	call	strtol
+
+	cmp	rax, 0
+	je	error
+
+	xor	r10, r10
+	xor	r11, r11
+	xor	r12, r12
+	xor	r11, r13
+	xor	r12, r14
+	xor	r11, r15
+
+	mov	r10, 0x0
+	mov	r11, 0x1
+
+	mov	rcx, rax
+#proper beginning implementation found with help of
+#https://github.com/dsprimm
+fibonacci:
+	mov	r12, r10
+	add	r12, r11
+	mov	r10, r11
+	mov	r11, r12
+	loop	fibonacci
+	sub	rsp, 8
+	mov	rdx, r12
+	mov	esi, OFFSET .input
+	mov 	edi, 1
+	call	__printf_chk
+	add	rsp, 8
 	ret
-	#xor	r10, r10
-	#xor	r11, r11
-	#xor	r12, r12
 
-	#mov	r10, 0x0
-	#mov	r11, 0x1
-
-	#mov	rcx, 5
-	#cld
-1:
+fail:
 	mov	rdi, OFFSET .error
 	call	puts
 	ret
-	#mov	r12, r10
-	#add	r12, r11
-	#mov	r10, r11
-	#mov	r11, r12
-
-	#loop	1b
-
-	#avx register
-
-	#mov ebx, r12
-	#mov	rdi, OFFSET .prompt
-	#mov	edi, 1
-	#mov	eax, 0
-	#ret
-	
-	
-
-	#mov	rdi, OFFSET .prompt
-	#call	puts
-	#push	rbx
-	#sub	rsp, 16
-	#mov	rax, QWORD PTR fs:40
-	#mov	QWORD PTR [rsp+8], rax
-	#xor	eax, eax
-	#lea	rsi, [rsp+4]
-	#mov	edi, OFFSET .input
-	#call	__isoc99_scanf
-	#mov	rdi, OFFSET .input
-	#call	puts
-	#cmp	DWORD PTR [rsp+4], 0
-	#add	rsp, 16
-	#pop	rbx
-	#ret
+error:
+	mov	rdi, OFFSET .error1
+	call	puts
+	ret
