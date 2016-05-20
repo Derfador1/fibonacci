@@ -11,7 +11,7 @@ return_va:
 	.string "0x%lx%lx%lx%lx\n"
 
 .error:
-	.asciz "Error improper arguments"
+	.asciz "Error improper command line arguments. Please use numbers from 0-300"
 
 .globl main
 main:
@@ -24,14 +24,13 @@ main:
 	xor	rsi, rsi	#0 for the second argument
 	mov	rdx, 10		#10 for the last argument
 
-	#mov	rsi, OFFSET return_va
+	mov	rsi, OFFSET return_va
 	call	strtol
-	#mov	rsi, OFFSET [return_va]
+	mov	rsi, [return_va]
 
 	#check what strtol returns
-	cmp	QWORD PTR[rsi], 0
-	#cmp	rax, 0
-	je	error
+	cmp	BYTE PTR[rsi], 0
+	jne	error
 
 	cmp	rax, 300
 	jg	error
