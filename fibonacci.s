@@ -11,30 +11,33 @@ return_va:
 	.string "0x%lx%lx%lx%lx\n"
 
 .error:
-	.asciz "Error improper about of arguments"
-
-.error1:
-	.asciz "Error with function call"
+	.asciz "Error improper arguments"
 
 .globl main
 main:
 	#check if there are onle 2 command line arguments, if not fail
 	cmp 	rdi, 2
-	jne	fail
+	jne	error
 	
 	xor	eax, eax
 	mov	rdi, [rsi+8]	#argv[1] for the first argument
 	xor	rsi, rsi	#0 for the second argument
 	mov	rdx, 10		#10 for the last argument
 
-	mov	rsi, OFFSET return_va
+	#mov	rsi, OFFSET return_va
 	call	strtol
-	mov	rsi, OFFSET [return_va]
+	#mov	rsi, OFFSET [return_va]
 
 	#check what strtol returns
 	cmp	QWORD PTR[rsi], 0
 	#cmp	rax, 0
 	je	error
+
+	cmp	rax, 300
+	jg	error
+
+	cmp	rax, 0
+	jl	error
 
 	mov	ecx, eax
 	mov	r10, 1
@@ -75,13 +78,13 @@ fibonacci:
 	xor	eax, eax
 	call	printf
 	ret
-fail:
+#fail:
 	#sets up the error string for this error
-	mov	rdi, OFFSET .error
-	call	puts
-	ret
+	#mov	rdi, OFFSET .error
+	#call	puts
+	#ret
 error:
 	#sets up the error string for this error
-	mov	rdi, OFFSET .error1
+	mov	rdi, OFFSET .error
 	call	puts
 	ret
