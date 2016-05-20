@@ -4,7 +4,7 @@
 	.string "Please enter the desired Fibonacci Number (0-200):"
 
 .input:
-	.string "Ox%x\n"
+	.string "0x%lx%lx%lx%lx\n"
 
 .error:
 	.asciz "Error improper about of arguments"
@@ -26,35 +26,38 @@ main:
 	cmp	rax, 0
 	je	error
 
-	xor	rbx, rbx
+	mov	ecx, eax
+	mov	r10, 1
 	xor	r11, r11
 	xor	r12, r12
-	xor	r11, r13
-	xor	r12, r14
-	xor	r11, r15
+	xor	r13, r13
+	xor	r14, r14
+	xor	r15, r15
+	xor	rbp, rbp
+	xor	rbx, rbx
 
-	mov	rbx, 0x0
-	mov	r11, 0x1
-
-	mov	rcx, rax
 #proper beginning implementation found with help of
 #https://github.com/dsprimm
 fibonacci:
-	mov	r12, rbx
-	add	r12, r11
-	mov	rbx, r11
-	mov	r11, r12
+	add	r10, r11
+	adc	r12, r13
+	adc	r14, r15
+	adc	rbx, rbp
+
+	xchg	r11, r10
+	xchg	r13, r12
+	xchg	r15, r14
+	xchg	rbp, rbx
 
 	sub	ecx, 1
-	je	finished
-
-	sub	rcx, 1
 	jne	fibonacci
 
+
 	mov	rdi, OFFSET .input
-	mov	rsi, r15
-	mov	rdx, r13
-	mov	rcx, r11
+	mov	rsi, rbp
+	mov	rdx, r15
+	mov	rcx, r13
+	mov	r8, r11
 	xor	eax, eax
 	call	printf
 	ret
@@ -64,21 +67,15 @@ finished:
 	xor	rdx, rdx
 	xor	rcx, rcx
 
-	#mov	rdi, OFFSET .input
-	#mov	rsi, r15
-	#mov	rdx, r13
-	#mov	rcx, r11
-	#xor	eax, eax
-	#call	printf
-	#ret
-
-	sub	rsp, 8
-	mov	rdx, r12
-	mov	esi, OFFSET .input
-	mov 	edi, 1
-	call	__printf_chk
-	add	rsp, 8
+	mov	rdi, OFFSET .input
+	mov	rsi, rbx
+	mov	rdx, r14
+	mov	rcx, r12
+	mov	r8, r10
+	xor	eax, eax
+	call	printf
 	ret
+
 
 fail:
 	mov	rdi, OFFSET .error
