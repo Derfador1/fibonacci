@@ -38,7 +38,7 @@ main:
 	xor	rbx, rbx
 
 #proper beginning implementation found with help of
-#https://github.com/dsprimm and 
+#https://github.com/pauliracane/fibonacci/blob/master/fibonacci.s
 fibonacci:
 	# adds to my registers as the values overflows
 	add	r10, r11
