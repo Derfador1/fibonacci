@@ -1,5 +1,12 @@
 .intel_syntax noprefix
 
+.data
+return_va:
+	.quad 0
+
+
+.text
+
 .input:
 	.string "0x%lx%lx%lx%lx\n"
 
@@ -19,11 +26,14 @@ main:
 	mov	rdi, [rsi+8]	#argv[1] for the first argument
 	xor	rsi, rsi	#0 for the second argument
 	mov	rdx, 10		#10 for the last argument
+
+	mov	rsi, OFFSET return_va
 	call	strtol
+	mov	rsi, OFFSET [return_va]
 
 	#check what strtol returns
-	#cmp	DWORD PTR[rsi], 0
-	cmp	rax, 0
+	cmp	QWORD PTR[rsi], 0
+	#cmp	rax, 0
 	je	error
 
 	mov	ecx, eax
